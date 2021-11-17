@@ -1,26 +1,24 @@
 // API endpoint to consume
 var earthquakeURL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson"
 
-// Perform a GET request to the query URL
+// consume API
 d3.json(earthquakeURL).then(function(data) {
-    // Once we get a response, send the data.features object to the createFeatures function
+    // send the data.features to createFeatures function
     createFeatures(data.features);
 });
 
 function createFeatures(earthquakeData) {
-  // Define a function we want to run once for each feature in the features array
-  // Give each feature a popup describing the place and time of the earthquake
-  function onEachFeature(feature, layer) {
-    layer.bindPopup("<h3>" + feature.properties.place +
-      "</h3><hr><p>" + new Date(feature.properties.time) + "</p>");
-}
-
-  // Create a GeoJSON layer containing the features array on the earthquakeData object
-  // Run the onEachFeature function once for each piece of data in the array
+  // create geoJSON layer containing the features array on the earthquakeData object
   var earthquakes = L.geoJSON(earthquakeData, {
     onEachFeature: onEachFeature
   });
 
+  // put a popup describing the place and time of the earthquake
+  function onEachFeature(feature, layer) {
+    console.log(feature.properties.place);
+    layer.bindPopup("<h3>" + feature.properties.place +
+        "</h3><hr><p>" + new Date(feature.properties.time) + "</p>");
+};
   // define a function to set the size of each earthquake data point based on magnitude
   function quakesize(mag) {
     //console.log(mag);
@@ -28,7 +26,7 @@ function createFeatures(earthquakeData) {
         return 1;
     };
     if (mag != 0) {
-        return mag * 6;
+        return mag * 10;
     };
   };
 
@@ -50,6 +48,7 @@ function createFeatures(earthquakeData) {
         return "lightgreen";
     };
   };
+
   var quakecircles =  L.geoJSON(earthquakeData, {
     pointToLayer: function (feature, latlng) {
     //console.log(latlng)
@@ -62,11 +61,9 @@ function createFeatures(earthquakeData) {
            weight: 1.5
     });
     },   
-  });
+  }).addTo(earthquakes);
 
-  // Sending our earthquakes layer to the createMap functio
-  createMap(quakecircles);
-
+  createMap(earthquakes);
 }
 
 function createMap(earthquakes) {
@@ -105,71 +102,8 @@ function createMap(earthquakes) {
         layers: [streetmap, earthquakes]
     });
 
-    // Create a layer control
-    // Pass in our baseMaps and overlayMaps
-    // Add the layer control to the map
+    // create layer control and add to the map
     L.control.layers(baseMaps, overlayMaps, {
         collapsed: false
     }).addTo(myMap);
 }
-
-// // create initial map
-// var map = L.map("map", {
-//     center: [40.7, -94.5],
-//     zoom: 2,
-//     layers: [lightmap, earthquakes]
-// });
-
-//     // define a function to set the size of each earthquake data point based on magnitude
-//     function quakesize(mag) {
-//         console.log(mag);
-//         if (mag == 0) {
-//             return 1;
-//         };
-//         if (mag != 0) {
-//             return mag * 10;
-//         };
-//     };
-
-//     // define a function to color each earthquake data point based on depth
-//     function quakecolor(depth) {
-//         console.log(depth);
-//         switch (true) {
-//         case depth > 90:
-//             return "red";
-//         case depth > 70:
-//             return "orangered";
-//         case depth > 50:
-//             return "orange";
-//         case depth > 30:
-//             return "gold";
-//         case depth > 10:
-//             return "yellow";
-//         default:
-//             return "lightgreen";
-//         };
-//     };
-
-//     // consume API to get data points and put them on the map
-//     L.geoJSON(data, {
-//         pointToLayer: function (feature, latlng) {
-//         console.log(latlng)
-//         return L.circleMarker(latlng, {
-//           radius: quakesize(feature.properties.mag),
-//           fillColor: quakecolor(feature.geometry.coordinates[2]),
-//           fillOpacity: 0.7,
-//           color: "black",
-//           stroke: true,
-//           weight: 1.5
-//         }
-//       );
-//     },
-//     onEachFeature: function(feature, layer) {
-//       layer.bindPopup("<h3>Location: " + feature.properties.place + "</h3><hr><p>Date: "
-//       + new Date(feature.properties.time) + "</p><hr><p>Magnitude: " + feature.properties.mag + "</p>");
-//     }
-// }).addTo(earthquakes);
-// // add earthquake layer to the map
-// earthquakes.addTo(map);
-// });
-//
