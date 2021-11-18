@@ -9,53 +9,9 @@ d3.json(earthquakeURL).then(function(data) {
 
 function createFeatures(earthquakeData) {
   // create geoJSON layer containing the features array on the earthquakeData object
-  var earthquakes =  L.geoJSON(earthquakeData, {
-    pointToLayer: function (feature, latlng) {
-    //console.log(latlng)
-    return L.circleMarker(latlng, {
-           radius: quakesize(feature.properties.mag),
-           fillColor: quakecolor(feature.geometry.coordinates[2]),
-           fillOpacity: 0.7,
-           color: "black",
-           stroke: true,
-           weight: 1.5
-    });
-    },   
-  });
-
-  // define a function to set the size of each earthquake data point based on magnitude
-  function quakesize(mag) {
-    //console.log(mag);
-    if (mag == 0) {
-        return 1;
-    };
-    if (mag != 0) {
-        return mag * 10;
-    };
-  };
-
-  // define a function to color each earthquake data point based on depth
-  function quakecolor(depth) {
-    //console.log(depth);
-    switch (true) {
-    case depth > 90:
-        return "red";
-    case depth > 70:
-        return "orangered";
-    case depth > 50:
-        return "orange";
-    case depth > 30:
-        return "gold";
-    case depth > 10:
-        return "yellow";
-    default:
-        return "lightgreen";
-    };
-  };
-
-  var quakeinfo = L.geoJSON(earthquakeData, {
+  var earthquakes = L.geoJSON(earthquakeData, {
     onEachFeature: onEachFeature
-    }).addTo(earthquakes);
+  });
 
   // put a popup describing the place and time of the earthquake
   function onEachFeature(feature, layer) {
@@ -65,8 +21,51 @@ function createFeatures(earthquakeData) {
         "</h3><hr><p>" + new Date(feature.properties.time) + "</p>");
         this.openPopup();
     });
-};
 
+    var quakecircles =  L.geoJSON(earthquakeData, {
+        pointToLayer: function (feature, latlng) {
+        //console.log(latlng)
+        return L.circleMarker(latlng, {
+               radius: quakesize(feature.properties.mag),
+               fillColor: quakecolor(feature.geometry.coordinates[2]),
+               fillOpacity: 0.7,
+               color: "black",
+               stroke: true,
+               weight: 1.5
+        });
+        },   
+    }).addTo(earthquakes);
+
+    // define a function to set the size of each earthquake data point based on magnitude
+    function quakesize(mag) {
+        //console.log(mag);
+        if (mag == 0) {
+            return 1;
+        };
+        if (mag != 0) {
+            return mag * 10;
+        };
+    };
+
+    // define a function to color each earthquake data point based on depth
+    function quakecolor(depth) {
+        //console.log(depth);
+        switch (true) {
+        case depth > 90:
+            return "red";
+        case depth > 70:
+            return "orangered";
+        case depth > 50:
+            return "orange";
+        case depth > 30:
+            return "gold";
+        case depth > 10:
+            return "yellow";
+        default:
+            return "lightgreen";
+        };
+    };
+};
   createMap(earthquakes);
 }
 
