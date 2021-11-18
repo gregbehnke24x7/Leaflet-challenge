@@ -95,21 +95,20 @@ function createMap(earthquakes) {
     }).addTo(myMap);
 
     // add a legend to the map
-    var legend = L.control({ position: "bottomright" });
+    var legend = L.control({ position: "bottomleft" });
 
     legend.onAdd = function() {
         var div = L.DomUtil.create("div", "Legend")
         var depths = [0, 10, 30, 50, 70, 90]
 
-        for(var i = 1; i < depths.length; i++)
-        {
-        div.innerHTML += "<div><i style='background-color:" + quakecolor(depths[i] - 1).toString() + ";'>"
-                        + "&nbsp;</i>" + depths[i - 1] + " - " + depths[i]
-                        + "</div>"
+        for(var i = 1; i < depths.length; i++) {
+            console.log(i);
+            div.innerHTML += "<div><i style='background-color:" + quakecolor(depths[i]).toString() + ";'>"
+                          + "&nbsp;</i>" + depths[i - 1] + " - " + depths[i]
+                          + "</div>";
+            console.log(div);
+        };
         return div
-        }
-    legend.addTo(myMap)
     };
-    //legend.addTo(myMap)
+    legend.addTo(myMap);
 };
-
