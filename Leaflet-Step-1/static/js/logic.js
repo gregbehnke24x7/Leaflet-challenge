@@ -37,6 +37,7 @@ function quakecolor(depth) {
     };
 };
 
+//define a function to set the feature attributes on the map
 function createFeatures(earthquakeData) {
   // create geoJSON layer containing the features array on the earthquakeData object
   var earthquakes =  L.geoJSON(earthquakeData, {
@@ -61,6 +62,7 @@ function createFeatures(earthquakeData) {
  createMap(earthquakes);
 };
 
+// define a function to create the map layer(s), overlays, layer controls, legend
 function createMap(earthquakes) {
     // define map layer
     var streetmap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
